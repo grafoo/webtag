@@ -55,3 +55,7 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# webtag
+webtag.cfg
+webtag.db

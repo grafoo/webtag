@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>webtag</title>
+
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='favicon.ico')}}" />
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" /> 
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <section id="bookmark" class="row">
+            <div class="col-md-4">
+                <h3>Goto Bookmark</h3>
+                <form action="/bookmark" method="get">
+                    <input type="text" class="form-control" name="name">
+                    <input type="submit" value="goto">
+                </form>
+            </div>
+        </section>
+
+        <section id="bookmark" class="row">
+            <div class="col-md-4">
+                <h3>Save Bookmark</h3>
+                <form id="bookmark_form" action="/bookmark" method="post">
+                <!--<form id="bookmark_form" action="">-->
+                    <label for="website_url">url</label>
+                    <input id="website_url" name="url" class="form-control" value="{{page}}">
+
+                    <label for="website_name">name</label>
+                    <input id="website_name" type="text" class="form-control" name="name">
+
+                    <label for="tag_search">tags</label>
+                    <select id="tag_search" class="form-control" multiple="multiple" name="tag-list"></select>
+                    <input id="tagList" type="hidden" name="tags">
+
+                    <!--<input type="button" value="save" onclick="saveBookmark()">-->
+                    <input type="submit" value="save">
+                </form>
+            </div>
+        </section>
+    </div>
+
+
+    <script type="text/javascript">
+        function getTagsString() {
+            tags = [];
+
+            $("#tag_search option").each(function() {
+                tags.push(this.text);
+            });
+
+            return JSON.stringify(tags);
+        }
+
+        function saveBookmark() {
+            document.getElementById("tagList").value = getTagsString();
+            document.getElementById("bookmark_form").submit();
+            alert(JSON.stringify(document.getElementById("tag_search")));
+        }
+    </script>
+
+    <script> type="text/javascript">
+        $("#search").select2({
+            multiple: true,
+            minimumInputLength: 3,
+            ajax: {                                                                             
+                url: "http://localhost:7777/search",
+                dataType: 'json',
+                data: function (params) {                                                        
+                        function getTags() {                                                         
+                            tags = [];                                                               
+                            tags.push(params.term);                                                  
+                            try {
+                                $("#search option").each(function() {                                    
+                                    tags.push(this.text);                                                
+                                });                                                                      
+                                return tags;                                                             
+                            } 
+                            catch(err) {
+                                console.log(err.message);
+                            }
+                        };                                                                           
+                        return {                                                                       
+                            q: JSON.stringify(getTags()), // search term                                 
+                            page: params.page                                                            
+                        };                                                                             
+                },                                                                               
+                processResults: function (data, page) {                                          
+                    return { results: data };                                                                             
+                },
+                cache: true
+            }
+        });
+
+        $("#tag_search").select2({
+            multiple: true,
+            tags: true,
+            tokenSeparators: [",", " "],
+            minimumInputLength: 1,
+            ajax: {
+                url: "http://localhost:7777/tag",
+                dataType: 'json',
+                data: function (params) {
+                        console.log(params);
+                        return {
+                            q: params.term,
+                            page: params.page
+                        };
+                },
+                processResults: function (data, page) {
+                    return { results: data };
+                },
+                cache: true
+            }
+        });
+    </script>
+</body>
+</html>

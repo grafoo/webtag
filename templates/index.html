@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -19,7 +19,7 @@
 
 <body>
     <div class="container">
-        <section id="bookmark" class="row">
+        <section id="goto-bookmark" class="row">
             <div class="col-md-4">
                 <h3>Goto Bookmark</h3>
                 <form action="/bookmark" method="get">
@@ -29,7 +29,7 @@
             </div>
         </section>
 
-        <section id="bookmark" class="row">
+        <section id="save-bookmark" class="row">
             <div class="col-md-4">
                 <h3>Save Bookmark</h3>
                 <form id="bookmark_form" action="/bookmark" method="post">
@@ -45,6 +45,24 @@
                     <input id="tagList" type="hidden" name="tags">
 
                     <!--<input type="button" value="save" onclick="saveBookmark()">-->
+                    <input type="submit" value="save">
+                </form>
+            </div>
+        </section>
+
+        <section id="import-bookmarks" class="row">
+            <div class="col-md-4">
+                <h3>Import Bookmarks</h3>
+                <form id="import_bookmarks_form" action="/import" method="post" enctype="multipart/form-data">
+                    <select class="form-control" name="file-type">
+                        <option>Firefox</option>
+                    </select>
+
+                    <div class="form-group">
+                        <label for="bookmarks_file">File input</label>
+                        <input type="file" id="bookmarks_file" name="bookmarks-file">
+                        <p class="help-block">JSON Backup File needed.</p>
+                    </div>
                     <input type="submit" value="save">
                 </form>
             </div>

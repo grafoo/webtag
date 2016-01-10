@@ -5,6 +5,7 @@ from flask import Flask, request, render_template, redirect, g, send_from_direct
 import json
 import os
 import sqlite3
+import re
 
 
 app = Flask(__name__)
@@ -110,6 +111,28 @@ def search():
     bookmarks = [{'id': row[0], 'text': row[1]} for row in cursor.fetchall()]
     return json.dumps(bookmarks)
 
+@app.route('/import', methods=['POST'])
+def import_bookmarks():
+    if request.form['file-type'] == 'Firefox':
+        bookmarks_file = request.files['bookmarks-file']
+    
+        bookmarks_obj = json.loads(bookmarks_file.readlines()[0])
+
+        for child in bookmarks_obj['children']:
+            if child['guid'] == 'menu________':
+                for bookmark in child['children']:
+                    try:
+                        if re.match("(^http)|(^ftp)", bookmark['uri']) != None:
+                            bookmark_id = insert_bookmark(name=bookmark['title'], url=bookmark['uri'])
+                            tags = bookmark['tags'].split(',')
+                            for tag in tags:
+                                tag_id = get_tag_id(tag_name=tag)
+                                insert_bookmark_tag(bookmark_id, tag_id)
+                    except KeyError, e:
+                        # some children won't have a uri
+                        pass
+
+
 # specialities
 
 @app.route('/favicon.ico')
@@ -122,4 +145,4 @@ def favicon():
 
 
 if __name__ == '__main__':
-   app.run(host='0.0.0.0', port=7777)
+    app.run(host='0.0.0.0', port=7777)

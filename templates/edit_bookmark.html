@@ -20,19 +20,7 @@
   <body>
     {% if session.authenticated %}
     <div class="container">
-      <section id="goto_bookmark" class="row">
-	<div class="well">
-        <form class="form" action="/bookmark" method="get">
-          <div class="form-group">
-	    <label for="bookmark">bookmark</label>
-            <input id="bookmark" type="text" class="form-control" name="name">
-          </div>
-            <input class="btn btn-primary pull-right" type="submit" value="goto bookmark">
-        </form>
-	</div>
-      </section>
-  
-      <section id="save_bookmark" class="row">
+      <section id="edit_bookmark" class="row">
 	<div class="well">
         <form id="bookmark_form" action="/bookmark" method="post">
 	    <div class="form-group">
@@ -49,7 +37,7 @@
               <label for="tag_search" class="control-label">tags</label>
               <select id="tag_search" name="tag-list"></select>
 	    </div>
-            <input class="btn btn-primary pull-right" type="submit" value="save bookmark">
+            <input class="btn btn-primary pull-right" type="submit" value="edit bookmark">
         </form>
 	</div>
       </section>
@@ -57,43 +45,45 @@
   
   
     <script type="text/javascript">
-	$("#tag_search").selectize({
-          plugins: ['remove_button'],
-          persist: false,
-          maxItems: null,
-          valueField: 'tag',
-          labelField: 'tag',
-          searchField: ['tag'],
-          render: {
-            item: function(item, escape) {
-              return '<div>' +
-                '<span class="tag">' + escape(item.tag) + '</span>' +
-                '</div>';
-            },
-            option: function(item, escape) {
-              return '<div>' +
-                '<span class="tag">' + escape(item.tag) + '</span>' +
-                '</div>';
-            }
+      $("#tag_search").selectize({
+        plugins: ['remove_button'],
+        persist: false,
+        maxItems: null,
+        valueField: 'tag',
+        labelField: 'tag',
+        searchField: ['tag'],
+        options: {{options|tojson}}, // e.g. options: [{tag: 'foo'}, {tag: 'bar'}],
+        items: {{items|tojson}}, // e.g. items: ['foo', 'bar'],
+        render: {
+          item: function(item, escape) {
+            return '<div>' +
+              '<span class="tag">' + escape(item.tag) + '</span>' +
+              '</div>';
           },
-          create: function(input) {
-            return {tag: input};
-          },
-	  load: function(query, callback) {
-            if (!query.length) return callback();
-            $.ajax({
-	      url: '/tag?query=' + encodeURIComponent(query),
-	      type: 'GET',
-	      error: function() {
-	        callback();
-	      },
-	      success: function(result) {
-	        var tags = JSON.parse(result);
-	        callback(tags);
-	      }
-	    });	
-	  }	
-	});
+          option: function(item, escape) {
+            return '<div>' +
+              '<span class="tag">' + escape(item.tag) + '</span>' +
+              '</div>';
+          }
+        },
+        create: function(input) {
+          return {tag: input};
+        },
+	load: function(query, callback) {
+          if (!query.length) return callback();
+          $.ajax({
+	    url: '/tag?query=' + encodeURIComponent(query),
+	    type: 'GET',
+	    error: function() {
+	      callback();
+	    },
+	    success: function(result) {
+	      var tags = JSON.parse(result);
+	      callback(tags);
+	    }
+          });
+        }
+      });
     </script>
     {% endif %}
   </body>

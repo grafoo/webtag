@@ -29,6 +29,25 @@ DATABASE = 'somefile'
 
 # usage
 
-- copy and paste the content of bookmarklet.js into the ulr field of a new bookmark
+- copy and paste the content of bookmarklet.js into the url field of a new bookmark
 - hit the newly created bookmarklet on every page you'd like to bookmark
 - create another bookmark for accessing webtag on it's default index page
+
+
+# dependencies
+
+- twitter-bootstrap 3.3.5
+  - bootstrap.min.css
+  - bootstrap.min.js
+
+- jquery 2.1.4
+  - jquery.min.js
+
+- selectize.js 0.12.1 (standalone)
+  - selectize.min.js
+  - selectize.css
+
+
+# ideas
+
+- argon2_cffi ( https://github.com/hynek/argon2_cffi ) seems promising for userpasswords
